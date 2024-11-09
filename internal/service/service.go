@@ -8,8 +8,15 @@ import (
 )
 
 type Service struct {
+	Authorization
 }
 
-func NewService(repos *repository.Repository, storage *storage.Storage, config *config.Config, loggers *logger.Logger) *Service {
-	return &Service{}
+func NewService(repos *repository.Repository, storage *storage.Storage, cfg *config.Config, loggers *logger.Logger) *Service {
+	return &Service{
+		Authorization: NewAuthService(cfg),
+	}
+}
+
+type Authorization interface {
+	GenerateToken(role, username string) (string, error)
 }

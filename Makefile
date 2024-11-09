@@ -2,7 +2,7 @@ tidy:
 	@go mod tidy
 
 run:
-	@go run cmd/app/main.go
+	@swag init -g cmd/app/main.go -o docs > /dev/null && go run cmd/app/main.go
 
 up:
 	@go run cmd/migration/main.go up
@@ -15,6 +15,3 @@ redo:
 
 status:
 	@go run cmd/migration/main.go status
-
-swag:
-	@swag init -g cmd/app/main.go
