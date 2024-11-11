@@ -1,8 +1,20 @@
 definitions:
+  handler.createResponse:
+    properties:
+      id:
+        type: string
+    type: object
   handler.loginResponse:
     properties:
       token:
         type: string
+    type: object
+  models.CreateDepartment:
+    properties:
+      name:
+        type: string
+    required:
+    - name
     type: object
   models.ErrorResponse:
     properties:
@@ -64,6 +76,46 @@ paths:
       summary: Sign In Admin
       tags:
       - Auth
+  /api/v1/departments:
+    post:
+      consumes:
+      - application/json
+      description: Create Department
+      parameters:
+      - description: Create Department
+        in: body
+        name: create
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateDepartment'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/handler.createResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Create Department
+      tags:
+      - Department
 securityDefinitions:
   ApiKeyAuth:
     in: header
