@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 	"verifyx/internal/models"
@@ -8,6 +9,10 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
+)
+
+var (
+	errNoRowsAffected = errors.New("no rows affected")
 )
 
 type departmentRepo struct {
@@ -49,10 +54,10 @@ func (r *departmentRepo) Create(request models.CreateDepartment) (uuid.UUID, err
 	return id, nil
 }
 
-func (r *departmentRepo) GetDepartments(filter models.DepartmentFilter) ([]models.Department, int, error) {
+func (r *departmentRepo) GetList(filter models.DepartmentFilter) ([]models.Department, int, error) {
 
 	// Base query and dynamic conditions
-	baseQuery := `SELECT id, name, created_at FROM departments`
+	baseQuery := `SELECT id, name, created_at FROM departments WHERE deleted_at IS NULL `
 	countQuery := `SELECT COUNT(*) FROM departments`
 	conditions := []string{}
 	params := map[string]interface{}{
@@ -68,7 +73,7 @@ func (r *departmentRepo) GetDepartments(filter models.DepartmentFilter) ([]model
 
 	// Add WHERE clause if conditions exist
 	if len(conditions) > 0 {
-		whereClause := " WHERE " + strings.Join(conditions, " AND ")
+		whereClause := strings.Join(conditions, " AND ")
 		baseQuery += whereClause
 		countQuery += whereClause
 	}
@@ -118,4 +123,92 @@ func (r *departmentRepo) GetDepartments(filter models.DepartmentFilter) ([]model
 	}
 
 	return departments, total, nil
+}
+
+func (r *departmentRepo) GetById(id uuid.UUID) (models.Department, error) {
+	var department models.Department
+
+	query := `
+	SELECT
+		id,
+		name,
+		created_at
+	FROM departments
+	WHERE id = $1 AND deleted_at IS NULL;`
+
+	if err := r.db.QueryRow(query, id).Scan(
+		&department.ID,
+		&department.Name,
+		&department.CreatedAt,
+	); err != nil {
+		r.logger.Error(err)
+		return models.Department{}, err
+	}
+
+	return department, nil
+}
+
+func (r *departmentRepo) Update(request models.UpdateDepartment) error {
+	query := `
+	UPDATE departments
+	SET
+		name = :name,
+		updated_at = now()
+	WHERE
+		id = :id
+		AND deleted_at IS NULL;`
+
+	// Prepare the data for the query
+	data := map[string]interface{}{
+		"id":   request.ID,
+		"name": request.Name,
+	}
+
+	// Execute the query
+	row, err := r.db.NamedExec(query, data)
+	if err != nil {
+		r.logger.Error(err)
+		return err
+	}
+
+	rowAffected, err := row.RowsAffected()
+	if err != nil {
+		r.logger.Error(err)
+		return err
+	}
+
+	if rowAffected == 0 {
+		return errNoRowsAffected
+	}
+
+	return nil
+}
+
+func (r *departmentRepo) Delete(id uuid.UUID) error {
+	query := `
+	UPDATE departments
+	SET
+		deleted_at = now()
+	WHERE
+		id = $1
+		AND deleted_at IS NULL;`
+
+	// Execute the query
+	row, err := r.db.Exec(query, id)
+	if err != nil {
+		r.logger.Error(err)
+		return err
+	}
+
+	rowAffected, err := row.RowsAffected()
+	if err != nil {
+		r.logger.Error(err)
+		return err
+	}
+
+	if rowAffected == 0 {
+		return errNoRowsAffected
+	}
+
+	return nil
 }

@@ -6,7 +6,9 @@ import (
 	"verifyx/config"
 	"verifyx/internal/models"
 
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
+	"github.com/pkg/errors"
 )
 
 func listPagination(c echo.Context) (models.Pagination, error) {
@@ -74,4 +76,18 @@ func calculatePagination(page, limit int) (int, int) {
 	}
 
 	return (page - 1) * limit, limit
+}
+
+func getUUIDParam(c echo.Context, param string) (uuid.UUID, error) {
+	paramValue := c.Param(param)
+	if paramValue != "" {
+		id, err := uuid.Parse(paramValue)
+		if err != nil {
+			return uuid.Nil, fmt.Errorf("invalid param %v", paramValue)
+		}
+
+		return id, nil
+	}
+
+	return uuid.Nil, errors.New("empty param value")
 }

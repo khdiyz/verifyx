@@ -98,3 +98,92 @@ func (h *Handler) getDepartments(c echo.Context) error {
 		Pagination: pagination,
 	})
 }
+
+// @Description Get Department
+// @Summary Get Department
+// @Tags Department
+// @Accept json
+// @Produce json
+// @Param id path string true "department id"
+// @Success 200 {object} models.Department
+// @Failure 400,401,404,500 {object} models.ErrorResponse
+// @Router /api/v1/departments/{id} [get]
+// @Security ApiKeyAuth
+func (h *Handler) getDepartment(c echo.Context) error {
+	id, err := getUUIDParam(c, "id")
+	if err != nil {
+		return errorResponse(c, http.StatusBadRequest, err)
+	}
+
+	department, err := h.service.Department.GetDepartment(id)
+	if err != nil {
+		return fromError(c, err)
+	}
+
+	return c.JSON(http.StatusOK, models.Department{
+		ID:        department.ID,
+		Name:      department.Name,
+		CreatedAt: department.CreatedAt,
+	})
+}
+
+// @Description Update Department
+// @Summary Update Department
+// @Tags Department
+// @Accept json
+// @Produce json
+// @Param id path string true "department id"
+// @Param update body models.UpdateDepartment true "update department body"
+// @Success 200 {object} createResponse
+// @Failure 400,401,404,500 {object} models.ErrorResponse
+// @Router /api/v1/departments/{id} [put]
+// @Security ApiKeyAuth
+func (h *Handler) updateDepartment(c echo.Context) error {
+	id, err := getUUIDParam(c, "id")
+	if err != nil {
+		return errorResponse(c, http.StatusBadRequest, err)
+	}
+
+	var body models.UpdateDepartment
+	if err := c.Bind(&body); err != nil {
+		return errorResponse(c, http.StatusBadRequest, err)
+	}
+	body.ID = id
+
+	if err := validator.ValidatePayloads(body); err != nil {
+		return errorResponse(c, http.StatusBadRequest, err)
+	}
+
+	if err = h.service.Update(body); err != nil {
+		return fromError(c, err)
+	}
+
+	return c.JSON(http.StatusOK, createResponse{
+		Id: id,
+	})
+}
+
+// @Description Delete Department
+// @Summary Delete Department
+// @Tags Department
+// @Accept json
+// @Produce json
+// @Param id path string true "department id"
+// @Success 200 {object} createResponse
+// @Failure 400,401,404,500 {object} models.ErrorResponse
+// @Router /api/v1/departments/{id} [delete]
+// @Security ApiKeyAuth
+func (h *Handler) deleteDepartment(c echo.Context) error {
+	id, err := getUUIDParam(c, "id")
+	if err != nil {
+		return errorResponse(c, http.StatusBadRequest, err)
+	}
+
+	if err = h.service.Department.Delete(id); err != nil {
+		return fromError(c, err)
+	}
+
+	return c.JSON(http.StatusOK, createResponse{
+		Id: id,
+	})
+}

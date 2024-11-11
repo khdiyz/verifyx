@@ -16,6 +16,15 @@ definitions:
     required:
     - name
     type: object
+  models.Department:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+    type: object
   models.ErrorResponse:
     properties:
       message:
@@ -51,6 +60,13 @@ definitions:
         type: integer
       total_count:
         type: integer
+    type: object
+  models.UpdateDepartment:
+    properties:
+      name:
+        type: string
+    required:
+    - name
     type: object
 host: localhost:4040
 info:
@@ -190,6 +206,127 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: Create Department
+      tags:
+      - Department
+  /api/v1/departments/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Department
+      parameters:
+      - description: department id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.createResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete Department
+      tags:
+      - Department
+    get:
+      consumes:
+      - application/json
+      description: Get Department
+      parameters:
+      - description: department id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Department'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Department
+      tags:
+      - Department
+    put:
+      consumes:
+      - application/json
+      description: Update Department
+      parameters:
+      - description: department id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: update department body
+        in: body
+        name: update
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdateDepartment'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.createResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Update Department
       tags:
       - Department
 securityDefinitions:

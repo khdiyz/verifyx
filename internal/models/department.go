@@ -18,7 +18,7 @@ type CreateDepartment struct {
 
 type UpdateDepartment struct {
 	ID   uuid.UUID `json:"-"`
-	Name string    `json:"name"`
+	Name string    `json:"name" validate:"required"`
 }
 
 type DepartmentFilter struct {

@@ -20,5 +20,8 @@ func NewRepository(db *sqlx.DB, logger *logger.Logger) *Repository {
 
 type Department interface {
 	Create(request models.CreateDepartment) (uuid.UUID, error)
-	GetDepartments(filter models.DepartmentFilter) ([]models.Department, int, error)
+	GetList(filter models.DepartmentFilter) ([]models.Department, int, error)
+	GetById(id uuid.UUID) (models.Department, error)
+	Update(request models.UpdateDepartment) error
+	Delete(id uuid.UUID) error
 }

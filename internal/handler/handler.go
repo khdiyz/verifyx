@@ -49,6 +49,9 @@ func (h *Handler) InitRoutes(cfg *config.Config) *echo.Echo {
 		{
 			department.POST("", h.createDepartment)
 			department.GET("", h.getDepartments)
+			department.GET("/:id", h.getDepartment)
+			department.PUT("/:id", h.updateDepartment)
+			department.DELETE("/:id", h.deleteDepartment)
 		}
 	}
 
