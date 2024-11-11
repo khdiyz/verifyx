@@ -21,6 +21,12 @@ definitions:
       message:
         type: string
     type: object
+  models.ListResponse:
+    properties:
+      data: {}
+      pagination:
+        $ref: '#/definitions/models.Pagination'
+    type: object
   models.Login:
     properties:
       password:
@@ -32,6 +38,19 @@ definitions:
     required:
     - password
     - username
+    type: object
+  models.Pagination:
+    properties:
+      limit:
+        default: 10
+        type: integer
+      page:
+        default: 1
+        type: integer
+      page_count:
+        type: integer
+      total_count:
+        type: integer
     type: object
 host: localhost:4040
 info:
@@ -77,6 +96,63 @@ paths:
       tags:
       - Auth
   /api/v1/departments:
+    get:
+      consumes:
+      - application/json
+      description: Get List Department
+      parameters:
+      - default: 10
+        description: limit
+        in: query
+        name: limit
+        required: true
+        type: integer
+      - default: 1
+        description: page
+        in: query
+        name: page
+        required: true
+        type: integer
+      - description: search
+        in: query
+        name: search
+        type: string
+      - description: sort by
+        in: query
+        name: sort_by
+        type: string
+      - description: sort by
+        in: query
+        name: order
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ListResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get List Department
+      tags:
+      - Department
     post:
       consumes:
       - application/json

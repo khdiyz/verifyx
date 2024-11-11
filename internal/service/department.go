@@ -1,6 +1,7 @@
 package service
 
 import (
+	"errors"
 	"verifyx/internal/models"
 	"verifyx/internal/repository"
 	"verifyx/pkg/logger"
@@ -28,4 +29,21 @@ func (s *DepartmentService) Create(request models.CreateDepartment) (uuid.UUID, 
 	}
 
 	return id, nil
+}
+
+func (s *DepartmentService) GetDepartments(filter models.DepartmentFilter) ([]models.Department, int, error) {
+	if filter.SortBy != "" && filter.SortBy != "created_at" {
+		return nil, 0, serviceError(errors.New("invalid sort by filter"), codes.InvalidArgument)
+	}
+	if filter.Order != "" && filter.Order != "asc" && filter.Order != "desc" {
+		return nil, 0, serviceError(errors.New("invalid order filter"), codes.InvalidArgument)
+
+	}
+
+	departments, total, err := s.repo.Department.GetDepartments(filter)
+	if err != nil {
+		return nil, 0, serviceError(err, codes.Internal)
+	}
+
+	return departments, total, nil
 }

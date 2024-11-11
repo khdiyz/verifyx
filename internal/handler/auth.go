@@ -33,7 +33,7 @@ func (h *Handler) adminLogin(c echo.Context) error {
 
 	// Check admin credentials (replace with DB check)
 	if login.Username != cfg.Username || login.Password != cfg.Password {
-		return errorResponse(c, http.StatusUnauthorized, errors.New("invalid credentials"))
+		return errorResponse(c, http.StatusUnauthorized, errors.New("incorrect username or password"))
 	}
 
 	// Generate JWT token

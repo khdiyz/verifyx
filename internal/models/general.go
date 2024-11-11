@@ -2,7 +2,7 @@ package models
 
 type ListResponse struct {
 	Data       any        `json:"data"`
-	Pagination Pagination `json:"pagination,omitempty"`
+	Pagination Pagination `json:"pagination"`
 }
 
 type ErrorResponse struct {
@@ -10,9 +10,9 @@ type ErrorResponse struct {
 }
 
 type Pagination struct {
-	Page       int64 `json:"page"  default:"1"`
-	Limit      int64 `json:"limit" default:"10"`
-	Offset     int64 `json:"-" default:"0"`
-	PageCount  int64 `json:"page_count"`
-	TotalCount int64 `json:"total_count"`
+	Page       int `json:"page"  default:"1"`
+	Limit      int `json:"limit" default:"10"`
+	Offset     int `json:"-" default:"0"`
+	PageCount  int `json:"page_count"`
+	TotalCount int `json:"total_count"`
 }

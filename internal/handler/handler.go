@@ -43,11 +43,12 @@ func (h *Handler) InitRoutes(cfg *config.Config) *echo.Echo {
 
 	router.POST("api/v1/auth/login", h.adminLogin)
 
-	v1 := router.Group("/api/v1", h.userIdentity)
+	v1 := router.Group("/api/v1")
 	{
 		department := v1.Group("/departments")
 		{
 			department.POST("", h.createDepartment)
+			department.GET("", h.getDepartments)
 		}
 	}
 

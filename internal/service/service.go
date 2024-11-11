@@ -29,4 +29,5 @@ type Authorization interface {
 
 type Department interface {
 	Create(request models.CreateDepartment) (uuid.UUID, error)
+	GetDepartments(filter models.DepartmentFilter) ([]models.Department, int, error)
 }

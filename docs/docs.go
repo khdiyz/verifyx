@@ -71,6 +71,92 @@ const docTemplate = `{
             }
         },
         "/api/v1/departments": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get List Department",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Department"
+                ],
+                "summary": "Get List Department",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "page",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "search",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "sort by",
+                        "name": "sort_by",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "sort by",
+                        "name": "order",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ListResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    }
+                }
+            },
             "post": {
                 "security": [
                     {
@@ -170,6 +256,15 @@ const docTemplate = `{
                 }
             }
         },
+        "models.ListResponse": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "pagination": {
+                    "$ref": "#/definitions/models.Pagination"
+                }
+            }
+        },
         "models.Login": {
             "type": "object",
             "required": [
@@ -184,6 +279,25 @@ const docTemplate = `{
                 "username": {
                     "type": "string",
                     "default": "admin"
+                }
+            }
+        },
+        "models.Pagination": {
+            "type": "object",
+            "properties": {
+                "limit": {
+                    "type": "integer",
+                    "default": 10
+                },
+                "page": {
+                    "type": "integer",
+                    "default": 1
+                },
+                "page_count": {
+                    "type": "integer"
+                },
+                "total_count": {
+                    "type": "integer"
                 }
             }
         }

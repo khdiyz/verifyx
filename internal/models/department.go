@@ -7,9 +7,9 @@ import (
 )
 
 type Department struct {
-	ID        uuid.UUID `json:"id"`
-	Name      string    `json:"name"`
-	CreatedAt time.Time `json:"created_at"`
+	ID        uuid.UUID `json:"id" db:"id"`
+	Name      string    `json:"name" db:"name"`
+	CreatedAt time.Time `json:"created_at" db:"created_at"`
 }
 
 type CreateDepartment struct {
@@ -19,4 +19,12 @@ type CreateDepartment struct {
 type UpdateDepartment struct {
 	ID   uuid.UUID `json:"-"`
 	Name string    `json:"name"`
+}
+
+type DepartmentFilter struct {
+	Offset int
+	Limit  int
+	Search string
+	SortBy string
+	Order  string
 }

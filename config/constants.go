@@ -7,4 +7,7 @@ const (
 	// token types
 	TokenTypeAccess  = "access"
 	TokenTypeRefresh = "refresh"
+
+	DefaultPage  = "1"
+	DefaultLimit = "10"
 )
