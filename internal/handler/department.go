@@ -45,6 +45,11 @@ func (h *Handler) createDepartment(c echo.Context) error {
 	})
 }
 
+type getDepartmentsResponse struct {
+	Departments []models.Department `json:"data"`
+	Pagination  models.Pagination   `json:"pagination"`
+}
+
 // @Description Get List Department
 // @Summary Get List Department
 // @Tags Department
@@ -55,7 +60,7 @@ func (h *Handler) createDepartment(c echo.Context) error {
 // @Param search query string false "search"
 // @Param sort_by query string false "sort by"
 // @Param order query string false "sort by"
-// @Success 200 {object} models.ListResponse
+// @Success 200 {object} getDepartmentsResponse
 // @Failure 400,401,404,500 {object} models.ErrorResponse
 // @Router /api/v1/departments [get]
 // @Security ApiKeyAuth
@@ -93,9 +98,9 @@ func (h *Handler) getDepartments(c echo.Context) error {
 	pageCount := math.Ceil(float64(pagination.TotalCount) / float64(pagination.Limit))
 	pagination.PageCount = int(pageCount)
 
-	return c.JSON(http.StatusOK, models.ListResponse{
-		Data:       departaments,
-		Pagination: pagination,
+	return c.JSON(http.StatusOK, getDepartmentsResponse{
+		Departments: departaments,
+		Pagination:  pagination,
 	})
 }
 

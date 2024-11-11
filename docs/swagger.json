@@ -121,7 +121,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.ListResponse"
+                            "$ref": "#/definitions/handler.getDepartmentsResponse"
                         }
                     },
                     "400": {
@@ -410,6 +410,20 @@
                 }
             }
         },
+        "handler.getDepartmentsResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Department"
+                    }
+                },
+                "pagination": {
+                    "$ref": "#/definitions/models.Pagination"
+                }
+            }
+        },
         "handler.loginResponse": {
             "type": "object",
             "properties": {
@@ -448,15 +462,6 @@
             "properties": {
                 "message": {
                     "type": "string"
-                }
-            }
-        },
-        "models.ListResponse": {
-            "type": "object",
-            "properties": {
-                "data": {},
-                "pagination": {
-                    "$ref": "#/definitions/models.Pagination"
                 }
             }
         },

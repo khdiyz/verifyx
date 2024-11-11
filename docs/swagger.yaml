@@ -4,6 +4,15 @@ definitions:
       id:
         type: string
     type: object
+  handler.getDepartmentsResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/models.Department'
+        type: array
+      pagination:
+        $ref: '#/definitions/models.Pagination'
+    type: object
   handler.loginResponse:
     properties:
       token:
@@ -29,12 +38,6 @@ definitions:
     properties:
       message:
         type: string
-    type: object
-  models.ListResponse:
-    properties:
-      data: {}
-      pagination:
-        $ref: '#/definitions/models.Pagination'
     type: object
   models.Login:
     properties:
@@ -147,7 +150,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.ListResponse'
+            $ref: '#/definitions/handler.getDepartmentsResponse'
         "400":
           description: Bad Request
           schema:

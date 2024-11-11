@@ -128,7 +128,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.ListResponse"
+                            "$ref": "#/definitions/handler.getDepartmentsResponse"
                         }
                     },
                     "400": {
@@ -417,6 +417,20 @@ const docTemplate = `{
                 }
             }
         },
+        "handler.getDepartmentsResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Department"
+                    }
+                },
+                "pagination": {
+                    "$ref": "#/definitions/models.Pagination"
+                }
+            }
+        },
         "handler.loginResponse": {
             "type": "object",
             "properties": {
@@ -455,15 +469,6 @@ const docTemplate = `{
             "properties": {
                 "message": {
                     "type": "string"
-                }
-            }
-        },
-        "models.ListResponse": {
-            "type": "object",
-            "properties": {
-                "data": {},
-                "pagination": {
-                    "$ref": "#/definitions/models.Pagination"
                 }
             }
         },

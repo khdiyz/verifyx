@@ -1,10 +1,5 @@
 package models
 
-type ListResponse struct {
-	Data       any        `json:"data"`
-	Pagination Pagination `json:"pagination"`
-}
-
 type ErrorResponse struct {
 	ErrorMessage string `json:"message"`
 }
