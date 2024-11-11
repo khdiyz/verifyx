@@ -58,7 +58,7 @@ func (r *departmentRepo) GetList(filter models.DepartmentFilter) ([]models.Depar
 
 	// Base query and dynamic conditions
 	baseQuery := `SELECT id, name, created_at FROM departments WHERE deleted_at IS NULL `
-	countQuery := `SELECT COUNT(*) FROM departments`
+	countQuery := `SELECT COUNT(*) FROM departments WHERE deleted_at IS NULL `
 	conditions := []string{}
 	params := map[string]interface{}{
 		"limit":  filter.Limit,
@@ -73,7 +73,7 @@ func (r *departmentRepo) GetList(filter models.DepartmentFilter) ([]models.Depar
 
 	// Add WHERE clause if conditions exist
 	if len(conditions) > 0 {
-		whereClause := strings.Join(conditions, " AND ")
+		whereClause := " AND " + strings.Join(conditions, " AND ")
 		baseQuery += whereClause
 		countQuery += whereClause
 	}
