@@ -10,11 +10,13 @@ import (
 
 type Repository struct {
 	Department
+	User
 }
 
 func NewRepository(db *sqlx.DB, logger *logger.Logger) *Repository {
 	return &Repository{
 		Department: NewDepartmentRepo(db, logger),
+		User:       NewUserRepo(db, logger),
 	}
 }
 
@@ -24,4 +26,10 @@ type Department interface {
 	GetById(id uuid.UUID) (models.Department, error)
 	Update(request models.UpdateDepartment) error
 	Delete(id uuid.UUID) error
+	GetByIds(ids uuid.UUIDs) ([]models.Department, error)
+}
+
+type User interface {
+	Create(request models.CreateUser) (uuid.UUID, error)
+	GetList(filter models.UserFilter) ([]models.User, int, error)
 }

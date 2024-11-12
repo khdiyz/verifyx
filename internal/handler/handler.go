@@ -45,13 +45,19 @@ func (h *Handler) InitRoutes(cfg *config.Config) *echo.Echo {
 
 	v1 := router.Group("/api/v1")
 	{
-		department := v1.Group("/departments")
+		departments := v1.Group("/departments")
 		{
-			department.POST("", h.createDepartment)
-			department.GET("", h.getDepartments)
-			department.GET("/:id", h.getDepartment)
-			department.PUT("/:id", h.updateDepartment)
-			department.DELETE("/:id", h.deleteDepartment)
+			departments.POST("", h.createDepartment)
+			departments.GET("", h.getDepartments)
+			departments.GET("/:id", h.getDepartment)
+			departments.PUT("/:id", h.updateDepartment)
+			departments.DELETE("/:id", h.deleteDepartment)
+		}
+
+		users := v1.Group("/users")
+		{
+			users.POST("", h.createUser)
+			users.GET("", h.getUsers)
 		}
 	}
 

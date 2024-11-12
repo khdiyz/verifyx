@@ -7,8 +7,10 @@ import (
 	"verifyx/internal/models"
 	"verifyx/pkg/logger"
 
+	"github.com/Masterminds/squirrel"
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
+	"github.com/lib/pq"
 )
 
 var (
@@ -39,7 +41,7 @@ func (r *departmentRepo) Create(request models.CreateDepartment) (uuid.UUID, err
 		) VALUES (:id, :name);`
 
 	// Prepare the data for the query
-	data := map[string]interface{}{
+	data := map[string]any{
 		"id":   id,
 		"name": request.Name,
 	}
@@ -60,7 +62,7 @@ func (r *departmentRepo) GetList(filter models.DepartmentFilter) ([]models.Depar
 	baseQuery := `SELECT id, name, created_at FROM departments WHERE deleted_at IS NULL `
 	countQuery := `SELECT COUNT(*) FROM departments WHERE deleted_at IS NULL `
 	conditions := []string{}
-	params := map[string]interface{}{
+	params := map[string]any{
 		"limit":  filter.Limit,
 		"offset": filter.Offset,
 	}
@@ -91,7 +93,7 @@ func (r *departmentRepo) GetList(filter models.DepartmentFilter) ([]models.Depar
 	baseQuery += " LIMIT :limit OFFSET :offset"
 
 	// Execute the main query
-	var departments []models.Department
+	var departments = []models.Department{}
 	rows, err := r.db.NamedQuery(baseQuery, params)
 	if err != nil {
 		r.logger.Error(err)
@@ -159,7 +161,7 @@ func (r *departmentRepo) Update(request models.UpdateDepartment) error {
 		AND deleted_at IS NULL;`
 
 	// Prepare the data for the query
-	data := map[string]interface{}{
+	data := map[string]any{
 		"id":   request.ID,
 		"name": request.Name,
 	}
@@ -211,4 +213,46 @@ func (r *departmentRepo) Delete(id uuid.UUID) error {
 	}
 
 	return nil
+}
+
+func (r *departmentRepo) GetByIds(ids uuid.UUIDs) ([]models.Department, error) {
+	departments := []models.Department{}
+
+	query := squirrel.Select("id", "name", "created_at").
+		From("departments").
+		Where("id = ANY(?)", pq.Array(ids)).
+		PlaceholderFormat(squirrel.Dollar)
+
+	sqlQuery, args, err := query.ToSql()
+	if err != nil {
+		return nil, err
+	}
+
+	rows, err := r.db.Query(sqlQuery, args...)
+	if err != nil {
+		r.logger.Error(err)
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var department models.Department
+		if err = rows.Scan(
+			&department.ID,
+			&department.Name,
+			&department.CreatedAt,
+		); err != nil {
+			r.logger.Error(err)
+			return nil, err
+		}
+
+		departments = append(departments, department)
+	}
+
+	if err = rows.Err(); err != nil {
+		r.logger.Error(err)
+		return nil, err
+	}
+
+	return departments, nil
 }
